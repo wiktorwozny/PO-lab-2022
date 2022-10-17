@@ -8,6 +8,8 @@ public class World {
         OptionsParser parser = new OptionsParser();
         MoveDirection[] directions = parser.parse(args);
 
+        Animal waga = new Animal();
+
         Animal zwierzak = new Animal();
         for (MoveDirection direction: directions) {
             out.println(zwierzak);

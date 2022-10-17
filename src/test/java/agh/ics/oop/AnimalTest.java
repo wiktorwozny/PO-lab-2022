@@ -21,5 +21,6 @@ public class AnimalTest {
         Vector2d v = new Vector2d(4, 0);
 
         assertTrue(tester.isAt(v));
+
     }
 }
