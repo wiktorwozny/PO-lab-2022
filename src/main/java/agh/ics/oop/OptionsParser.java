@@ -31,7 +31,7 @@ public class OptionsParser {
                     toReturn[i] = MoveDirection.LEFT;
                     i++;
                 }
-                case "b", "backwards" -> {
+                case "b", "backward" -> {
                     toReturn[i] = MoveDirection.BACKWARD;
                     i++;
                 }
