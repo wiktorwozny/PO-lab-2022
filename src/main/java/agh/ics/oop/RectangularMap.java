@@ -3,10 +3,10 @@ package agh.ics.oop;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RectangularMap implements IWorldMap {
+public class RectangularMap extends AbstractWorldMap implements IWorldMap {
 
-    private int width, height;
-    private HashMap<Vector2d, Animal> map = new HashMap<>();
+    private final int width;
+    private final int height;
 
     public RectangularMap(int width, int height) {
         this.width = width;
@@ -18,11 +18,6 @@ public class RectangularMap implements IWorldMap {
         Vector2d upperRight = new Vector2d(this.width - 1, this.height - 1);
 
         return (position.precedes(upperRight) && position.follows(new Vector2d(0, 0)) && !isOccupied(position));
-    }
-
-    @Override
-    public boolean isOccupied(Vector2d position) {
-        return this.map.containsKey(position);
     }
 
     @Override
@@ -48,11 +43,11 @@ public class RectangularMap implements IWorldMap {
         return this.map.get(position);
     }
 
-    public String toString() {
-        MapVisualizer mapVisualizer = new MapVisualizer(this);
+    public Vector2d lowerLeftDraw() {
+        return new Vector2d(0, 0);
+    }
 
-        Vector2d lowerLeft = new Vector2d(0, 0);
-        Vector2d upperRight = new Vector2d(this.width - 1, this.height - 1);
-        return mapVisualizer.draw(lowerLeft, upperRight);
+    public Vector2d upperRightDraw() {
+        return new Vector2d(this.width - 1, this.height - 1);
     }
 }

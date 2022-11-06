@@ -1,19 +1,21 @@
 package agh.ics.oop;
 
-public class Animal {
+import static java.lang.System.out;
 
-    private Vector2d position = new Vector2d(2, 2);
+public class Animal extends AbstractWorldMapElement {
+
     private MapDirection direction = MapDirection.NORTH;
     private IWorldMap map;
     private Vector2d previousPosition;
 
-    Animal(IWorldMap map) {
+    public Animal(IWorldMap map) {
+        super(new Vector2d(2, 2));
         this.map = map;
     }
 
-    Animal(IWorldMap map, Vector2d initialPosition) {
+    public Animal(IWorldMap map, Vector2d initialPosition) {
+        super(initialPosition);
         this.map = map;
-        this.position = initialPosition;
     }
 
 
@@ -24,7 +26,6 @@ public class Animal {
             case SOUTH -> "S";
             case WEST -> "W";
         };
-//        return "position: " + this.position.toString() + " direction: " + direction.toString();
     }
 
     boolean isAt(Vector2d position) {

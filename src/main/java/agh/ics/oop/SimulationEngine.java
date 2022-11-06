@@ -5,9 +5,9 @@ import java.util.ArrayList;
 
 public class SimulationEngine implements IEngine {
 
-    private IWorldMap map;
-    private MoveDirection[] moves;
-    private ArrayList<Animal> animals = new ArrayList<>();
+    private final IWorldMap map;
+    private final MoveDirection[] moves;
+    private final ArrayList<Animal> animals = new ArrayList<>();
 
     public SimulationEngine(MoveDirection[] moves, IWorldMap map, Vector2d[] initialPositions) {
 
@@ -30,7 +30,7 @@ public class SimulationEngine implements IEngine {
 
         for (int i = 0; i < this.moves.length; i++) {
             this.animals.get(i % this.animals.size()).move(this.moves[i]);
-//            out.println(this.animals.get(i % this.animals.size()).getPosition() + " animal:" + i % this.animals.size());
+//            out.println(map);
         }
     }
 }
