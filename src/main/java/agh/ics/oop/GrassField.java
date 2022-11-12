@@ -27,36 +27,35 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
             }
 
             this.map.put(grassPosition, new Grass(grassPosition));
-
         }
     }
 
     @Override
     public boolean canMoveTo(Vector2d position) {
-//        we do not care about situation when there is grass on the destination position, because in this case animal
-//        eats it (see method 'place', 3rd 'if')
         return !(this.objectAt(position) instanceof Animal);
     }
 
     @Override
     public boolean place(Animal animal) {
 
-        if (!this.canMoveTo(animal.getPosition())) {
+        if (!super.place(animal)) {
             return false;
         }
 
-        if (animal.getPreviousPosition() != null) {
-            this.map.remove(animal.getPreviousPosition());
-        }
+        this.map.put(animal.getPosition(), animal);
 
-//        animal eats grass on the map, new grass object appears on the map
-        if (this.objectAt(animal.getPosition()) instanceof Grass) {
+        return true;
+    }
+
+    public boolean positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+        if (this.objectAt(newPosition) instanceof Grass) {
+            this.map.remove(newPosition);
 
             int x = ThreadLocalRandom.current().nextInt(0, this.maxX + 1);
             int y = ThreadLocalRandom.current().nextInt(0, this.maxY + 1);
 
             Vector2d grassPosition = new Vector2d(x, y);
-            while (this.isOccupied(grassPosition) || grassPosition.equals(animal.getPosition())) {
+            while (this.isOccupied(grassPosition)) {
                 x = ThreadLocalRandom.current().nextInt(0, this.maxX + 1);
                 y = ThreadLocalRandom.current().nextInt(0, this.maxY + 1);
                 grassPosition = new Vector2d(x, y);
@@ -65,9 +64,7 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
             this.map.put(grassPosition, new Grass(grassPosition));
         }
 
-        this.map.put(animal.getPosition(), animal);
-
-        return true;
+        return super.positionChanged(oldPosition, newPosition);
     }
 
     @Override
@@ -93,5 +90,4 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
 
         return result;
     }
-
 }

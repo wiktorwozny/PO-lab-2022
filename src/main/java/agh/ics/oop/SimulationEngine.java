@@ -30,7 +30,7 @@ public class SimulationEngine implements IEngine {
 
         for (int i = 0; i < this.moves.length; i++) {
             this.animals.get(i % this.animals.size()).move(this.moves[i]);
-//            out.println(map);
+            out.println(map);
         }
     }
 }

@@ -1,12 +1,14 @@
 package agh.ics.oop;
 
+import java.util.ArrayList;
+
 import static java.lang.System.out;
 
 public class Animal extends AbstractWorldMapElement {
 
     private MapDirection direction = MapDirection.NORTH;
     private IWorldMap map;
-    private Vector2d previousPosition;
+    private final ArrayList<IPositionChangeObserver> positionObservers = new ArrayList<>();
 
     public Animal(IWorldMap map) {
         super(new Vector2d(2, 2));
@@ -41,26 +43,35 @@ public class Animal extends AbstractWorldMapElement {
                 Vector2d newPosition = this.position.add(this.direction.toUnitVector());
 
                 if (this.map.canMoveTo(newPosition)) {
-                    this.previousPosition = position;
+                    this.positionChanged(this.position, newPosition);
                     this.position = newPosition;
-                    this.map.place(this);
                 }
             }
             case BACKWARD -> {
                 Vector2d newPosition2 = this.position.substract(this.direction.toUnitVector());
 
                 if (this.map.canMoveTo(newPosition2)) {
-                    this.previousPosition = position;
+                    this.positionChanged(this.position, newPosition2);
                     this.position = newPosition2;
-                    this.map.place(this);
                 }
             }
         }
+    }
 
+    public void addObserver(IPositionChangeObserver observer) {
+        this.positionObservers.add(observer);
+    }
+
+    public void removeObserver(IPositionChangeObserver observer) {
+        this.positionObservers.remove(observer);
+    }
+
+    void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+        for (IPositionChangeObserver observer: this.positionObservers) {
+            observer.positionChanged(oldPosition, newPosition);
+        }
     }
 
     public Vector2d getPosition() {return this.position;}
     public MapDirection getDirection() {return this.direction;}
-    public Vector2d getPreviousPosition() {return previousPosition;}
-
 }

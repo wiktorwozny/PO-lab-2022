@@ -22,15 +22,14 @@ public class RectangularMap extends AbstractWorldMap implements IWorldMap {
 
     @Override
     public boolean place(Animal animal) {
-        if (isOccupied(animal.getPosition())) {
+
+        if (!super.place(animal)) {
             return false;
         }
+
         if (!canMoveTo(animal.getPosition())) {
+            animal.removeObserver(this);
             return false;
-        }
-        //animal can be placed
-        if (animal.getPreviousPosition() != null) {
-            this.map.remove(animal.getPreviousPosition());
         }
 
         this.map.put(animal.getPosition(), animal);
