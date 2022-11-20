@@ -22,18 +22,21 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         return mapVisualizer.draw(this.lowerLeftDraw(), this.upperRightDraw());
     }
 
-    public boolean place(Animal animal) {
+    public void place(Animal animal) {
 
-        if (this.map.get(animal.getPosition()) instanceof Animal) {
-            return false;
+        if (animal == null) {
+            throw new IllegalArgumentException("Null can not be placed on the worldMap");
+        }
+
+        if ((this.map.get(animal.getPosition()) instanceof Animal) || animal.getPosition() == null) {
+            throw new IllegalArgumentException("Object can not be placed on position " + animal.getPosition() + " There " +
+                    "is an animal already!");
         }
 
         animal.addObserver(this);
-
-        return true;
     }
 
-    public boolean positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+    public boolean positionChanged(Object object, Vector2d oldPosition, Vector2d newPosition) {
         AbstractWorldMapElement worldMapElement = this.map.get(oldPosition);
         this.map.put(newPosition, worldMapElement);
         this.map.remove(oldPosition);

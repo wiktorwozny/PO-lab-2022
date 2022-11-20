@@ -20,21 +20,31 @@ public class RectangularMap extends AbstractWorldMap implements IWorldMap {
         return (position.precedes(upperRight) && position.follows(new Vector2d(0, 0)) && !isOccupied(position));
     }
 
+    public boolean isInsideTheMap(Vector2d position) {
+        Vector2d upperRight = new Vector2d(this.width - 1, this.height - 1);
+
+        return position != null && position.precedes(upperRight) && position.follows(new Vector2d(0, 0));
+    }
+
     @Override
-    public boolean place(Animal animal) {
+    public void place(Animal animal) {
 
-        if (!super.place(animal)) {
-            return false;
-        }
+        super.place(animal);
 
-        if (!canMoveTo(animal.getPosition())) {
+        if (!isInsideTheMap(animal.getPosition())) {
             animal.removeObserver(this);
-            return false;
+            throw new IllegalArgumentException("Object can not be placed on position: " + animal.getPosition() +
+                    ". It is outside the map!");
         }
+
+//        if (this.map.get(animal.getPosition()) instanceof Animal) {
+//            animal.removeObserver(this);
+//            System.out.println("asd");
+//            throw new IllegalArgumentException("Object siaidisad not be placed on position: " + animal.getPosition() +
+//                    ". There is an animal placed already!");
+//        }
 
         this.map.put(animal.getPosition(), animal);
-
-        return true;
     }
 
     @Override

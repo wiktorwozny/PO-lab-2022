@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class RectangularMapTest {
 
@@ -34,9 +36,9 @@ public class RectangularMapTest {
 
         RectangularMap rectangularMap = new RectangularMap(10, 20);
 
-        assertTrue(rectangularMap.place(new Animal(rectangularMap, new Vector2d(3, 3))));
-        assertFalse(rectangularMap.place(new Animal(rectangularMap, new Vector2d(3, 3))));
-        assertFalse(rectangularMap.place(new Animal(rectangularMap, new Vector2d(10, 20))));
+        assertDoesNotThrow(() -> rectangularMap.place(new Animal(rectangularMap, new Vector2d(3, 3))));
+        assertThrows(IllegalArgumentException.class, () -> rectangularMap.place(new Animal(rectangularMap, new Vector2d(3, 3))));
+        assertThrows(IllegalArgumentException.class, () -> rectangularMap.place(new Animal(rectangularMap, new Vector2d(10, 20))));
 
     }
 

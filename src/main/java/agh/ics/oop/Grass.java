@@ -1,6 +1,6 @@
 package agh.ics.oop;
 
-public class Grass extends AbstractWorldMapElement {
+public class Grass extends AbstractMovableWorldMapElement {
 
     private Vector2d position;
 

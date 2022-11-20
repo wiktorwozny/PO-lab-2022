@@ -8,6 +8,7 @@ import static java.lang.System.out;
 public class GrassField extends AbstractWorldMap implements IWorldMap {
 
     private final int maxX, maxY;
+    protected final MapBoundary mapBoundary = new MapBoundary();
 
     public GrassField(int amount) {
 
@@ -27,6 +28,7 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
             }
 
             this.map.put(grassPosition, new Grass(grassPosition));
+            this.mapBoundary.addWorldMapElement(new Grass(grassPosition));
         }
     }
 
@@ -36,18 +38,15 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
     }
 
     @Override
-    public boolean place(Animal animal) {
+    public void place(Animal animal) {
 
-        if (!super.place(animal)) {
-            return false;
-        }
-
+        super.place(animal);
         this.map.put(animal.getPosition(), animal);
 
-        return true;
+        this.mapBoundary.addWorldMapElement(animal);
     }
 
-    public boolean positionChanged(Vector2d oldPosition, Vector2d newPosition) {
+    public boolean positionChanged(Object object, Vector2d oldPosition, Vector2d newPosition) {
         if (this.objectAt(newPosition) instanceof Grass) {
             this.map.remove(newPosition);
 
@@ -64,11 +63,15 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
             this.map.put(grassPosition, new Grass(grassPosition));
         }
 
-        return super.positionChanged(oldPosition, newPosition);
+        return super.positionChanged(object, oldPosition, newPosition);
     }
 
     @Override
     public Vector2d lowerLeftDraw() {
+
+        if (this.map.isEmpty()) {
+            return new Vector2d(0, 0);
+        }
 
         Vector2d result = map.keySet().iterator().next();
 
@@ -77,10 +80,16 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
         }
 
         return result;
+
+//        return this.mapBoundary.getLowerLeftCorner();
     }
 
     @Override
     public Vector2d upperRightDraw() {
+
+        if (this.map.isEmpty()) {
+            return new Vector2d(0, 0);
+        }
 
         Vector2d result = map.keySet().iterator().next();
 
@@ -89,5 +98,7 @@ public class GrassField extends AbstractWorldMap implements IWorldMap {
         }
 
         return result;
+
+//        return this.mapBoundary.getUpperRightCorner();
     }
 }

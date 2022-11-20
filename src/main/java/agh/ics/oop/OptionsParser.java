@@ -2,7 +2,7 @@ package agh.ics.oop;
 
 public class OptionsParser {
 
-    MoveDirection[] parse(String[] args) {
+    public MoveDirection[] parse(String[] args) {
 
         int n = 0, i = 0;
         String[] strings = {"f", "forward", "r", "right", "l", "left", "b", "backward"};
@@ -35,6 +35,7 @@ public class OptionsParser {
                     toReturn[i] = MoveDirection.BACKWARD;
                     i++;
                 }
+                default -> throw new IllegalArgumentException(string + " is not legal move specification");
             }
         }
         return toReturn;

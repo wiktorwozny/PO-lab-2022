@@ -4,11 +4,10 @@ import java.util.ArrayList;
 
 import static java.lang.System.out;
 
-public class Animal extends AbstractWorldMapElement {
+public class Animal extends AbstractMovableWorldMapElement {
 
     private MapDirection direction = MapDirection.NORTH;
     private IWorldMap map;
-    private final ArrayList<IPositionChangeObserver> positionObservers = new ArrayList<>();
 
     public Animal(IWorldMap map) {
         super(new Vector2d(2, 2));
@@ -55,20 +54,6 @@ public class Animal extends AbstractWorldMapElement {
                     this.position = newPosition2;
                 }
             }
-        }
-    }
-
-    public void addObserver(IPositionChangeObserver observer) {
-        this.positionObservers.add(observer);
-    }
-
-    public void removeObserver(IPositionChangeObserver observer) {
-        this.positionObservers.remove(observer);
-    }
-
-    void positionChanged(Vector2d oldPosition, Vector2d newPosition) {
-        for (IPositionChangeObserver observer: this.positionObservers) {
-            observer.positionChanged(oldPosition, newPosition);
         }
     }
 

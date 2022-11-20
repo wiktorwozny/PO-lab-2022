@@ -19,9 +19,7 @@ public class SimulationEngine implements IEngine {
         }
 
         for (Animal animal: this.animals) {
-            if (this.map.canMoveTo(animal.getPosition())) {
-                this.map.place(animal);
-            }
+            this.map.place(animal);
         }
     }
 
@@ -30,7 +28,7 @@ public class SimulationEngine implements IEngine {
 
         for (int i = 0; i < this.moves.length; i++) {
             this.animals.get(i % this.animals.size()).move(this.moves[i]);
-            out.println(map);
+//            out.println(map);
         }
     }
 }
