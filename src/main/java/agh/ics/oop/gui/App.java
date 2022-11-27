@@ -1,70 +1,97 @@
 package agh.ics.oop.gui;
 import javafx.application.Application;
 import agh.ics.oop.*;
+import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
-public class App extends Application {
+public class App extends Application implements IMapRefreshObserver {
 
     private AbstractWorldMap map;
+    private ThreadedSimulationEngine engine;
+    private Thread engineThread;
+    private GridPane mapGrid;
 
     @Override
     public void init() throws Exception {
+
         super.init();
 
-        Parameters parameters = getParameters();
-
-        List<String> argsList = parameters.getRaw();
-        String[] args = new String[argsList.size()];
-        args = argsList.toArray(args);
-
         try {
-            MoveDirection[] directions = new OptionsParser().parse(args);
             this.map = new GrassField(10);
             Vector2d[] positions = { new Vector2d(2,1), new Vector2d(3, 1) };
-            IEngine engine = new SimulationEngine(directions, this.map, positions);
-            engine.run();
 
-            System.out.println(this.map);
-
+            this.engine = new ThreadedSimulationEngine(map, positions, 300);
+            this.engine.addObserver(this);
         }
         catch (IllegalArgumentException exception) {
             exception.printStackTrace();
         }
-
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-//        this.map = new GrassField(10);
+        primaryStage.setOnCloseRequest(e -> {
+            Platform.exit();
+            System.exit(0);
+        });
 
-        GridPane gridPane = new GridPane();
-        gridPane.setGridLinesVisible(true);
-        gridPane.setHgap(0);
-        gridPane.setVgap(0);
-        int cellWidth = 30;
-        int cellHeight = 30;
+        this.mapGrid = new GridPane();
+        mapGrid.setGridLinesVisible(true);
+        mapGrid.setHgap(0);
+        mapGrid.setVgap(0);
+
+        VBox root = new VBox();
+        TextField textField = new TextField();
+        Button button = new Button("START");
+        button.setOnAction(event -> {
+
+            String[] moves = textField.getCharacters().toString().split(" ");
+            MoveDirection[] directions = new OptionsParser().parse(moves);
+
+            this.engine.setMoves(directions);
+            this.engineThread = new Thread(this.engine);
+            this.engineThread.start();
+        });
+
+        root.getChildren().addAll(textField, button);
+        root.getChildren().add(mapGrid);
+        renderGrid(mapGrid);
+
+        Scene scene = new Scene(root, 700, 700);
+
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    void renderGrid(GridPane gridPane) throws FileNotFoundException {
 
         int minY = this.map.lowerLeftDraw().y;
         int minX = this.map.lowerLeftDraw().x;
         int maxY = this.map.upperRightDraw().y;
         int maxX = this.map.upperRightDraw().x;
 
-        System.out.println("minX: " + minX + " minY: " + minY + " maxX: " + maxX + " maxY: " +maxY);
+        int cellWidth = 50;
+        int cellHeight = 50;
 
         Label xyLabel = new Label("y\\x");
         GridPane.setHalignment(xyLabel, HPos.CENTER);
         gridPane.getColumnConstraints().add(new ColumnConstraints(cellWidth));
         gridPane.getRowConstraints().add(new RowConstraints(cellHeight));
         gridPane.add(xyLabel, 0, 0, 1, 1);
+        gridPane.setGridLinesVisible(true);
 
         for (int i = minY; i <= maxY; i++) {
             Label label = new Label(Integer.toString(i));
@@ -87,16 +114,24 @@ public class App extends Application {
                     continue;
                 }
 
-                Object worldMapElement = this.map.objectAt(position);
-                Label label = new Label(worldMapElement.toString());
-                GridPane.setHalignment(label, HPos.CENTER);
-                gridPane.add(label, position.x - minX + 1, maxY - (position.y - minY) + 1, 1, 1);
+                IMapElement worldMapElement = (IMapElement) this.map.objectAt(position);
+                GuiElementBox element = new GuiElementBox(worldMapElement);
+                VBox graphicalElement = element.getGraphicalElement();
+                GridPane.setHalignment(graphicalElement, HPos.CENTER);
+                gridPane.add(graphicalElement, position.x - minX + 1, maxY - position.y + 1, 1, 1);
             }
         }
+    }
 
-        Scene scene = new Scene(gridPane, 600, 600);
-
-        primaryStage.setScene(scene);
-        primaryStage.show();
+    @Override
+    public void refresh() {
+        Platform.runLater(() -> {
+            this.mapGrid.getChildren().clear();
+            try {
+                this.renderGrid(this.mapGrid);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

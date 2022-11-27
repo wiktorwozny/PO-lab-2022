@@ -29,6 +29,10 @@ public class Animal extends AbstractMovableWorldMapElement {
         };
     }
 
+    public String toGuiString() {
+        return "A " + " " + this.position.toString();
+    }
+
     boolean isAt(Vector2d position) {
         return this.position.equals(position);
     }
@@ -55,6 +59,20 @@ public class Animal extends AbstractMovableWorldMapElement {
                 }
             }
         }
+    }
+
+    public String getImageResource() {
+
+        String path = "src/main/resources/";
+        path += switch(this.getDirection()) {
+            case NORTH -> "up.png";
+            case WEST -> "left.png";
+            case EAST -> "right.png";
+            case SOUTH -> "down.png";
+        };
+
+        System.out.println(path);
+        return path;
     }
 
     public Vector2d getPosition() {return this.position;}

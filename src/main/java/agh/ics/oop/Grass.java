@@ -13,4 +13,12 @@ public class Grass extends AbstractMovableWorldMapElement {
         return "*";
     }
 
+    public String toGuiString() {
+        return "Trawa";
+    }
+
+    public String getImageResource() {
+        return "src/main/resources/grass.png";
+    }
+
 }
